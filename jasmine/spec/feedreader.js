@@ -13,7 +13,7 @@ $(function() {
     * a related set of tests. This suite is all about the RSS
     * feeds definitions, the allFeeds variable in our application.
     */
-    describe('RSS Feeds', function() {
+        describe('RSS Feeds', function() {
         /* This tests to make sure that the
          * allFeeds variable has been defined and that it is not
          * empty. 
@@ -98,61 +98,60 @@ $(function() {
 
         //Initial entries tests
         describe('Initial Entries', function() {
-            //creates a variable inside the suite's scope that can be accessed by both the beforeEach and it methods.
-               
-                
+                //ensures that loadFeed is done running
                 beforeEach(function(done){
                     
                 loadFeed(0,done);
                     
                 });
-
+                
+            
                 it('loadFeed is called and completes work', function(){
+                    //gets the number of entries from feed
                     const feedLen = document.querySelector('.feed').children.length; 
 
                                   
-                     
-                   console.log('feedlen inside IT', feedLen)
+                    //if feedLen > 0 it means there is at least 1 entry.   
                    expect(feedLen).toBeGreaterThan(0);
-                    console.log('feedlen inside IT2', feedLen)
                 });
 
             
         });
     
+    
+    
         //Loads a different feed
         describe('New Feed Selection', function(){
-        //sets a couple of veriables in the scope of the suite so that they can be set and accessed at diffent points by different functions
+        //sets a couple of veriables in the scope of the suite so that they can be set and accessed by before beforeEach() and it(). It sets them to null so that we can test if the original value changed.
             let initialFeed = null;
             let currentFeed = null;
+
                 //ensures that loadFeed has been successfully finished before executing the tests
-                beforeEach(function(done) {                       
-                        loadFeed(0,done);                                    
+                beforeEach(function(done) {
+                        //it loads the first feed and gets the text out of it. Then converts it to a string and gets a unique number from it
+                        loadFeed(0);
+                    
+                        initialFeed = hashString($('.feed').text());
+                        //it loads a second feed and finalizes the execution of beforeEach().
+                        loadFeed(1,done);                                    
                 });
             
             
                 //Tests if the feed container can load a different feed.
-                it('Feed is loaded and refreshes', async function(){
-                    //gets a feed, convert it to a string and gets a unique has number from it
-                    console.log('initial feedText: ', $('.feed').text())
-                    initialFeed = hashString($('.feed').text());
-                    console.log('initial feedHash: ', initialFeed);
-                    //gets a different feed, convert it to a string and gets a unique has number from it
-                  await loadFeed(1, afterComplete);
-                    function afterComplete(){
-                        console.log('currentfeed Hash: ', $('.feed').text());
-                        currentFeed = hashString($('.feed').text());
-                        console.log('fn ran');
-                        console.log('current feed: ', currentFeed);
-                        return currentFeed;
-                                            }
+                it('Feed is loaded and refreshes', function(){
+                    
+       
+                    //gets a different feed, also convert it to a string and then converts it into a unique hash number.
+                    currentFeed = hashString($('.feed').text());
                                         
+                    //ensures that the original value of initialFeed and currentFeed have been reassigned to the hashes.
+                    expect(initialFeed).not.toEqual(null);
+                    expect(currentFeed).not.toEqual(null);
+                    
                     //compares the two hashes. If they're different it means the feed loaded a different set of articles
-                   // expect(initialFeed).not.toEqual(null);
-                    expect(loadFeed(1,afterComplete)).not.toEqual(null);
-                    console.log('current feed in expect: ', loadFeed(1,afterComplete));
                     expect(initialFeed).not.toEqual(currentFeed);
-                    })
+                    
+                })
             
         });
 

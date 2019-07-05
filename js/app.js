@@ -72,7 +72,6 @@ function init() {
 
                  if (cb) {
                      cb();
-                     console.log("fn executed");
                  }
                },
        error: function (result, status, err){
